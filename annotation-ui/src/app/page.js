@@ -1,4 +1,5 @@
 import FilesTable from "@/components/FilesTable";
+import AuthHeader from "@/components/AuthHeader";
 import Image from "next/image";
 import Papa from 'papaparse';
 import dataCSV from '@/data/epic_sample.csv';
@@ -33,14 +34,19 @@ export default async function Home() {
     const data = await getData();
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center m-4">
-            <h1 className="text-2xl sm:text-3xl font-extrabold">Annotation Dataset</h1>
-            <div className="flex-grow w-full max-w-5xl items-center justify-center font-mono text-sm">
-                <Suspense fallback={<div>Loading...</div>}>
-                    <FilesTable files={data} />
-                </Suspense>
-            </div>
-        </main>
+        <>
+            <header className="xsticky xtop-0 flex items-center space-x-4 p-4 rounded-md xbg-gray-100 xshadow-md justify-end">
+                <AuthHeader />
+            </header>
+            <main className="flex min-h-screen flex-col items-center justify-center m-4">
+                <h1 className="text-2xl sm:text-3xl font-extrabold">Annotation Dataset</h1>
+                <div className="flex-grow w-full max-w-5xl items-center justify-center font-mono text-sm">
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <FilesTable files={data} />
+                    </Suspense>
+                </div>
+            </main>
+        </>
 
     );
 }
