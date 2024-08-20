@@ -2,8 +2,14 @@
 
 import Link from "next/link"; // Import Link component from Next.js
 import { useState } from "react";
-import { Drawer, AppBar, Toolbar, IconButton, Typography, List, ListItem, ListItemText, CssBaseline, Box } from "@mui/material";
+import { Drawer, AppBar, Toolbar, IconButton, Typography, List, ListItem, ListItemText, Divider, CssBaseline, Box } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import EditIcon from "@mui/icons-material/Edit";
+import LogoutIcon from "@mui/icons-material/Logout";
+
+import { signIn, signOut } from "next-auth/react"
 
 export default function Shell({ children }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -45,24 +51,29 @@ export default function Shell({ children }) {
           <List>
             <Link href="/" passHref>
               <ListItem button>
+                <HomeIcon sx={{ mr: 2 }} />
                 <ListItemText primary="Validation Dataset" />
               </ListItem>
             </Link>
             <Link href="/my-annotations" passHref>
               <ListItem button>
-                <ListItemText primary="My annotations" />
+                <AssignmentIcon sx={{ mr: 2 }} />
+                <ListItemText primary="My Annotations" />
               </ListItem>
             </Link>
             <Link href="/annotate/random" passHref>
               <ListItem button>
+                <EditIcon sx={{ mr: 2 }} />
                 <ListItemText primary="Annotate" />
               </ListItem>
             </Link>
-            {/* <Link href="/settings" passHref>
-              <ListItem button>
-                <ListItemText primary="Settings" />
-              </ListItem>
-            </Link> */}
+          </List>
+          <Divider />
+          <List>
+            <ListItem button onClick={() => signOut()}>
+              <LogoutIcon sx={{ mr: 2 }} />
+              <ListItemText primary="Sign Out" />
+            </ListItem>
           </List>
         </Box>
       </Drawer>

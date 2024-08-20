@@ -64,11 +64,11 @@ const defaultValues = questions.reduce((acc, q) => {
 }, {});
 
 
-export default function Annotate({ file, annotation }) {
+export default function Annotate({ file, annotation, allCount, completeCount }) {
     // const router = useRouter();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-
+    const [counts, setCounts] = useState({allCount, completeCount})
 
 
     const goToRandomAnnotation = () => {
@@ -107,7 +107,9 @@ export default function Annotate({ file, annotation }) {
         setOpenDialog(false);
 
         storeAnnotation(file.narration_id, data)
-            .then(() => {
+            .then(({allCount, completeCount}) => {
+                // console.log(res);
+                setCounts({allCount, completeCount});
                 setOpenSnackbar(true); // Show success snackbar after submission
             })
             .catch(error => {
@@ -151,7 +153,7 @@ export default function Annotate({ file, annotation }) {
                     <>
                         <div className='my-2'>
                             <div className='mr-3 inline'>
-                                Completed: 3/600
+                                Completed: {counts.completeCount}/{counts.allCount}
                             </div>
                         </div>
                         <div className='my-2'>
@@ -171,7 +173,7 @@ export default function Annotate({ file, annotation }) {
 
                 <div style={{ flexGrow: 1 }}>
                     <Typography variant="h6" component="h2">
-                        Task description
+                        Annotation task description
                         <IconButton aria-label="help" onClick={handleHelpOpen} style={{ marginLeft: 8 }}>
                             <HelpOutlineIcon />
                         </IconButton>
