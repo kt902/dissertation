@@ -7,6 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import EditIcon from "@mui/icons-material/Edit";
+import CalculateIcon from "@mui/icons-material/Calculate";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 import { signIn, signOut } from "next-auth/react"
@@ -65,6 +66,12 @@ export default function Shell({ children }) {
               <ListItem button>
                 <EditIcon sx={{ mr: 2 }} />
                 <ListItemText primary="Annotate" />
+              </ListItem>
+            </Link>
+            <Link href="/stats" passHref>
+              <ListItem button>
+                <CalculateIcon sx={{ mr: 2 }} />
+                <ListItemText primary="Statistics" />
               </ListItem>
             </Link>
           </List>

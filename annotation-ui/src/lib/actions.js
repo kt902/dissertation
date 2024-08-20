@@ -32,7 +32,7 @@ export async function getAnnotationByNarrationId(narrationId) {
         const database = mongoClient.db(process.env.DB_NAME); // Replace with your actual database name
         const collection = database.collection("annotation_queue"); // Replace with your actual collection name
 
-        
+
         // Find the annotation by narrationId
         const annotation = await collection.findOne({ user_id: userId, narration_id: narrationId });
 
@@ -40,7 +40,7 @@ export async function getAnnotationByNarrationId(narrationId) {
         const completeCount = await collection.countDocuments({ user_id: userId, status: "complete" });
 
         // Count all annotations
-        const allCount = await collection.countDocuments({ user_id: userId  });
+        const allCount = await collection.countDocuments({ user_id: userId });
 
 
         if (!annotation) {
@@ -89,12 +89,12 @@ export async function storeAnnotation(narrationId, annotationData) {
             },
         );
 
-         // Count pending annotations
-         const completeCount = await collection.countDocuments({ user_id: userId, status: "complete" });
+        // Count pending annotations
+        const completeCount = await collection.countDocuments({ user_id: userId, status: "complete" });
 
-         // Count all annotations
-         const allCount = await collection.countDocuments({ user_id: userId });
- 
+        // Count all annotations
+        const allCount = await collection.countDocuments({ user_id: userId });
+
 
         return {
             success: true,
@@ -158,3 +158,68 @@ export async function getRandomPendingAnnotation() {
         };
     }
 }
+
+
+export async function aggregateAnnotationsByStatus() {
+    try {
+        const mongoClient = await client.connect();
+        const database = mongoClient.db(process.env.DB_NAME); // Replace with your actual database name
+        const collection = database.collection("annotation_queue"); // Replace with your actual collection name
+
+        const aggregationResult = await collection.aggregate([
+            {
+                $group: {
+                    _id: { user_id: "$user_id", status: "$status" }, // Group by user_id and status
+                    count: { $sum: 1 } // Count the number of annotations for each group
+                }
+            },
+            {
+                $group: {
+                    _id: "$_id.user_id", // Group by user_id to structure the results by user
+                    statuses: {
+                        $push: {
+                            k: "$_id.status",
+                            v: "$count"
+                        }
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    statuses: {
+                        $mergeObjects: [
+                            { complete: 0, pending: 0, in_progress: 0, review: 0 }, // All possible statuses with default values
+                            { $arrayToObject: "$statuses" } // Convert the statuses array to an object
+                        ]
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0, // Exclude the default _id field
+                    user_id: "$_id", // Rename _id to user_id for clarity
+                    statuses: 1 // Keep the statuses field
+                }
+            }
+        ]).toArray();
+
+        // Convert the array of results to the desired object format
+        const resultAsObject = aggregationResult.reduce((acc, item) => {
+            acc[item.user_id] = item.statuses;
+            return acc;
+        }, {});
+
+        return {
+            success: true,
+            data: resultAsObject,
+        };
+    } catch (e) {
+        console.error("Error aggregating annotations by status:", e);
+        return {
+            success: false,
+            message: "Failed to aggregate annotations by status",
+            error: e.message,
+        };
+    }
+}
+
