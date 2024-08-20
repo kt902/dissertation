@@ -1,6 +1,6 @@
-import { NextResponse, userAgent } from 'next/server';
-import { getSession } from 'next-auth/react';
+
 export { default } from "next-auth/middleware"
+
 
 // // See "Matching Paths" below to learn more
 // export const config = {

@@ -51,7 +51,6 @@ function parseCSV(filePath) {
 const users = JSON.parse(process.env.USERS);
 
 
-
 function distributeItems(items, people) {
     const assignments = {};
 

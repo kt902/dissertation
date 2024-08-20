@@ -8,6 +8,7 @@ const Video = ({ src }) => {
             controls={true}
             loop
             autoPlay
+            playsInline
             src={src}
         />
     );

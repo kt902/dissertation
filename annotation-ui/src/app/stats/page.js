@@ -1,6 +1,10 @@
 
 import { Card, CardContent, Typography, Grid } from '@mui/material';
-import { aggregateAnnotationsByStatus } from "@/lib/actions"
+import { aggregateAnnotationsByStatus } from "@/lib/actions";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function Stats() {
     const {data: stats} = await aggregateAnnotationsByStatus();
 
