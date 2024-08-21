@@ -50,9 +50,21 @@ export const getNarration = async (narration_id) => {
     return (await dataset).index.get(narration_id);
 }
 
+export const getNarrations = async (narration_ids) => {
+    const result = {};
+    for (let index = 0; index < narration_ids.length; index++) {
+        const narration_id = narration_ids[index];
+        
+        const item = (await dataset).index.get(narration_id);
+        result[narration_id] = item;
+    }
+    return result;
+}
+
 
 export default {
     getAll,
     getNarration,
-    getRandomAnnotation
+    getRandomAnnotation,
+    getNarrations
 }
