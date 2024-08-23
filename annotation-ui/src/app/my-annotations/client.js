@@ -17,7 +17,7 @@ function MyAnnotations({ annotations, allCount, completeCount }) {
 
     return (
         <div className='my-4 space-y-4'>
-            <div class="mr-3 inline">Completed: {completeCount}/{allCount}</div>
+            <div className="mr-3 inline">Completed: {completeCount}/{allCount}</div>
             <div className='bg-white'>
                 <DataGrid
                     rows={annotations}

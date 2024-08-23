@@ -7,6 +7,7 @@ const Video = ({ src }) => {
             className="h-full w-full rounded-lg"
             controls={true}
             loop
+            muted
             autoPlay
             playsInline
             src={src}

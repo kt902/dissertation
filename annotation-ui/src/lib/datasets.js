@@ -1,14 +1,18 @@
+'use server'
+
 import fileMapping from '@/data/file-mapping.json';
 import Papa from 'papaparse';
 import dataCSV from '@/data/epic_sample.csv';
-
+import completeDataCSV from '@/data/epic_complete.csv';
+import { cookies } from 'next/headers';
+ 
 const getVideoURL = (narration_id) => {
-    return `https://kumbi-dissertation.s3.amazonaws.com/EPIC-KITCHENS-100/${fileMapping[narration_id]}`;
+    return `https://kumbi-dissertation.s3.amazonaws.com/EK-100/${narration_id}.mp4`;
 };
 
-async function fetchEntireDataset() {
+async function fetchEntireDataset(sourceData) {
     const data = await new Promise((res) => {
-        Papa.parse(dataCSV, {
+        Papa.parse(sourceData, {
             delimiter: ',', // Specify comma delimiter
             header: true,
             skipEmptyLines: true,
@@ -35,10 +39,11 @@ async function fetchEntireDataset() {
 }
 
 
-const dataset = fetchEntireDataset();
+const validationDataset = fetchEntireDataset(dataCSV);
+const completeDataset = fetchEntireDataset(completeDataCSV);
 
 export const getAll = async () => {
-    return (await dataset).list;
+    return (await getCurrentDataset()).list;
 }
 
 export const getRandomAnnotation = async () => {
@@ -47,7 +52,7 @@ export const getRandomAnnotation = async () => {
 }
 
 export const getNarration = async (narration_id) => {
-    return (await dataset).index.get(narration_id);
+    return (await getCurrentDataset()).index.get(narration_id);
 }
 
 export const getNarrations = async (narration_ids) => {
@@ -55,16 +60,29 @@ export const getNarrations = async (narration_ids) => {
     for (let index = 0; index < narration_ids.length; index++) {
         const narration_id = narration_ids[index];
         
-        const item = (await dataset).index.get(narration_id);
+        const item = (await getCurrentDataset()).index.get(narration_id);
         result[narration_id] = item;
     }
     return result;
 }
 
-
-export default {
-    getAll,
-    getNarration,
-    getRandomAnnotation,
-    getNarrations
+export const getCurrentDatasetName = async () => {
+    return cookies().get('current_dataset')?.value || 'validation';
 }
+
+export const setCurrentDatasetName = async (dataset) => {
+    cookies().set('current_dataset', dataset);
+    return;
+}
+
+
+const getCurrentDataset = async () => {
+    const datasetName = await getCurrentDatasetName();
+
+    if (datasetName == 'complete') {
+        return completeDataset;
+    } else {
+        return validationDataset;
+    }
+}
+

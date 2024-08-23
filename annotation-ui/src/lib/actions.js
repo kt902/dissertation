@@ -1,6 +1,8 @@
 "use server";
 
 import client from "@/lib/mongodb";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth/next";
 
 export async function testDatabaseConnection() {
     let isConnected = false;
@@ -19,9 +21,6 @@ export async function testDatabaseConnection() {
 }
 
 // import { ObjectId } from 'mongodb'; // If you're using MongoDB's ObjectId
-
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getServerSession } from "next-auth/next";
 
 export async function getAnnotationByNarrationId(narrationId) {
     try {

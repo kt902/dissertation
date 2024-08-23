@@ -1,4 +1,4 @@
-import datasets from '@/lib/datasets';
+import * as datasets from '@/lib/datasets';
 import { getAnnotationByNarrationId, getRandomPendingAnnotation } from '@/lib/actions';
 import Annotate from './client';
 import { redirect } from 'next/navigation';

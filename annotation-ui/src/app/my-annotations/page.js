@@ -1,9 +1,10 @@
-import FilesTable from "@/components/FilesTable";
-import Image from "next/image";
 import { Suspense } from 'react';
-import datasets from '@/lib/datasets';
+import * as datasets from '@/lib/datasets';
 import { getAnnotations } from "@/lib/actions";
 import MyAnnotations from "./client";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function MyAnnotationsServer() {
     let {data: annotations} = await getAnnotations();

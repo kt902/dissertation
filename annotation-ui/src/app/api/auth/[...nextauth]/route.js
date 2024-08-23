@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import client from "@/lib/mongodb";
+import { cookies } from 'next/headers'
 
 export const authOptions = {
     pages: {
@@ -33,6 +34,8 @@ export const authOptions = {
             
                         if (passwordMatches) {
                             // Return user details if the email and password match
+                            cookies().set('current_dataset', '');
+
                             return { id: user._id, email: user.email };
                         }
                     }
