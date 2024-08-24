@@ -15,65 +15,92 @@ import { storeAnnotation } from '@/lib/actions';
 
 const questions = [
     {
-        id: 'pixel_quality',
-        label: "How would you rate the overall video resolution and sharpness?",
-        min: 0,
-        max: 5
-    },
-    {
         id: 'object_presence',
         label: "How clearly visible are the primary objects involved in the action?",
-        min: 0,
-        max: 5
+        options: [
+            { value: 1, label: 'Not visible at all' },
+            { value: 2, label: 'Barely visible' },
+            { value: 3, label: 'Partially visible' },
+            { value: 4, label: 'Mostly visible' },
+            { value: 5, label: 'Fully visible' }
+        ]
     },
     {
         id: 'action_completeness',
         label: "How completely does the video segment capture the entire action, including the beginning and end?",
-        min: 0,
-        max: 5
+        options: [
+            { value: 1, label: 'Completely misses the action' },
+            { value: 2, label: 'Misses significant parts of the action' },
+            { value: 3, label: 'Misses some parts of the action' },
+            { value: 4, label: 'Nearly complete, minor parts missing' },
+            { value: 5, label: 'Completely captures the action' }
+        ]
     },
     {
-        id: 'distractions',
-        label: "To what extent does the video successfully maintain focus on the action, minimizing the impact of distracting objects or movements in the background?",
-        min: 0,
-        max: 5
+        id: 'focus',
+        label: "How well does the video maintain focus on the action, minimizing the impact of distracting objects or movements in the background?",
+        options: [
+            { value: 1, label: 'Completely unfocused, very distracting' },
+            { value: 2, label: 'Often unfocused, many distractions' },
+            { value: 3, label: 'Somewhat focused, occasional distractions' },
+            { value: 4, label: 'Mostly focused, minimal distractions' },
+            { value: 5, label: 'Perfectly focused, no distractions' }
+        ]
+    },
+    {
+        id: 'lighting',
+        label: "How well does the lighting in the video support clear visibility of the action?",
+        options: [
+            { value: 1, label: 'Very poorly lit, action barely visible' },
+            { value: 2, label: 'Poorly lit, action is difficult to see' },
+            { value: 3, label: 'Adequately lit, action is visible but not clear' },
+            { value: 4, label: 'Well lit, action is mostly clear' },
+            { value: 5, label: 'Perfectly lit, action is very clear' }
+        ]
+    },
+    {
+        id: 'camera_motion',
+        label: "How well is the camera motion controlled, allowing for clear observation of the action?",
+        options: [
+            { value: 1, label: 'Very erratic, action is hard to follow' },
+            { value: 2, label: 'Somewhat erratic, action is difficult to follow' },
+            { value: 3, label: 'Slightly shaky, action is mostly followable' },
+            { value: 4, label: 'Mostly smooth, action is easy to follow' },
+            { value: 5, label: 'Completely smooth, action is very easy to follow' }
+        ]
     }
 ]
 
-
 const schema = yup
     .object({
+        action_presence: yup.number().integer().required("Please indicate if the action is present in the video."),
         ...questions.reduce((acc, q) => {
-            acc[q.id] = yup.number().integer().required();
+            acc[q.id] = yup.number().integer().when('action_presence', {
+                is:  1,
+                then: () => yup.number().integer().required(`Please rate the ${q.label.toLowerCase()}.`),
+                otherwise: () => yup.number().nullable().notRequired()
+            });
             return acc;
         }, {})
-        // narrationClarity1: yup.number().integer().required(),
-        // narrationClarity2: yup.number().integer().required(),
-        // narrationClarity3: yup.number().integer().required(),
-        // narrationClarity4: yup.number().integer().required(),
-        // narrationClarity5: yup.number().integer().required(),
-        // narrationConsistency: yup.bool().required(),
-        // narrationEngagement: yup.number().required(),
     })
     .required()
-
 
 const defaultValues = questions.reduce((acc, q) => {
     acc[q.id] = '';
     return acc;
-}, {});
-
+}, {
+    action_presence: ''
+});
 
 export default function Annotate({ file, annotation, allCount, completeCount }) {
-    // const router = useRouter();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-    const [counts, setCounts] = useState({allCount, completeCount})
-
+    const [counts, setCounts] = useState({ allCount, completeCount })
 
     const goToRandomAnnotation = () => {
         window.location.href = '/annotate/random';
     };
+
     const {
         control,
         handleSubmit,
@@ -84,54 +111,32 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
             ...defaultValues,
             ...annotation
         },
-        // defaultValues: {
-        //     ...defaultValues
-        //     // narrationClarity1: '',
-        //     // narrationClarity2: '',
-        //     // narrationClarity3: '',
-        //     // narrationClarity4: '',
-        //     // narrationClarity5: '',
-        //     // narrationConsistency: '',
-        //     // narrationEngagement: '',
-        // },
     });
 
     const onSubmit = (data) => {
-        console.log('Form Data:', data);
-        // const annotations = JSON.parse(localStorage.getItem('annotations') || '{}');
-        // annotations[file.narration_id] = data;
-        // localStorage.setItem('annotations', JSON.stringify(annotations));
-
-        // storeAnnotation(file.narration_id, data)
-        // Close the dialog before proceeding with submission
         setOpenDialog(false);
 
         storeAnnotation(file.narration_id, data)
-            .then(({allCount, completeCount}) => {
-                // console.log(res);
-                setCounts({allCount, completeCount});
-                setOpenSnackbar(true); // Show success snackbar after submission
+            .then(({ allCount, completeCount }) => {
+                setCounts({ allCount, completeCount });
+                setOpenSnackbar(true);
             })
             .catch(error => {
                 console.error("Error saving annotation:", error);
             });
-        // You can handle form submission logic here, like sending data to a server
     };
 
     const handleSaveClick = () => {
-        setOpenDialog(true); // Open the confirmation dialog when Save is clicked
+        setOpenDialog(true);
     };
 
     const handleDialogClose = (confirm) => {
         setOpenDialog(false);
 
         if (confirm) {
-            handleSubmit(onSubmit)(); // Proceed with form submission if confirmed
-        } else {
-            // setOpenDialog(false); // Close the dialog if canceled
+            handleSubmit(onSubmit)();
         }
     };
-
 
     const [openHelp, setOpenHelp] = useState(false);
 
@@ -140,13 +145,7 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center m-4 pb-16">
-            {/* Sticky container with video and task description side by side */}
-            <div className="flex-grow w-full max-w-5xl space-y-4"
-            // style={{ position: 'sticky', top: 20, flexShrink: 0, zIndex: 999 }}
-            >
-                {/* <Typography variant="h5" component="h1" gutterBottom>
-                    Annotate Video Segment Quality
-                </Typography> */}
+            <div className="flex-grow w-full max-w-5xl space-y-4">
                 <h2 className="text-2xl sm:text-3xl font-extrabold">Annotate</h2>
 
                 <Suspense fallback={<div>Loading...</div>}>
@@ -179,7 +178,6 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                         </IconButton>
                     </Typography>
                     <Typography variant="body1" gutterBottom>
-                        {/* Please watch the video and answer the following questions based on your observations. */}
                         Your task is to carefully watch the provided video segment and answer a series of questions that assess the clarity, completeness, and quality of the actions depicted.
                     </Typography>
                 </div>
@@ -188,11 +186,25 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                 <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col w-full items-start justify-start pt-4'>
 
                     <div className='text-red-400'>
-                        {Object.keys(errors).length > 0 && "Please complete all questions before saving"}
+                        {Object.keys(errors).length > 0 && "Please complete all required fields before saving"}
                     </div>
 
+                    {/* Gating Question */}
+                    <FormControl component="fieldset" className="mt-4">
+                        <FormLabel component="legend">Does this video segment contain the relevant action?</FormLabel>
+                        <Controller
+                            name="action_presence"
+                            control={control}
+                            render={({ field }) => (
+                                <RadioGroup row {...field}>
+                                    <FormControlLabel value="1" control={<Radio />} label="Yes" />
+                                    <FormControlLabel value="0" control={<Radio />} label="No" />
+                                </RadioGroup>
+                            )}
+                        />
+                    </FormControl>
 
-                    {/* Repeat for other Multiple Choice Questions */}
+                    {/* Likert Scale Questions */}
                     {questions.map((q) => (
                         <FormControl component="fieldset" className="mt-4" key={q.id}>
                             <FormLabel component="legend">{q.label}</FormLabel>
@@ -200,47 +212,16 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                                 name={q.id}
                                 control={control}
                                 render={({ field }) => (
-                                    <RadioGroup row {...field}>
-                                        <FormControlLabel value="0" control={<Radio />} label="0" />
-                                        <FormControlLabel value="1" control={<Radio />} label="1" />
-                                        <FormControlLabel value="2" control={<Radio />} label="2" />
-                                        <FormControlLabel value="3" control={<Radio />} label="3" />
-                                        <FormControlLabel value="4" control={<Radio />} label="4" />
-                                        <FormControlLabel value="5" control={<Radio />} label="5" />
+                                    <RadioGroup {...field}>
+                                        {q.options.map(option => (
+                                            <FormControlLabel key={option.value} value={option.value} control={<Radio />} label={option.label} />
+                                        ))}
                                     </RadioGroup>
                                 )}
                             />
                         </FormControl>
                     ))}
 
-                    {/* Boolean Question */}
-                    {/* <FormControl component="fieldset" className="mt-4">
-    <FormLabel component="legend">Was the narration consistent?</FormLabel>
-    <Controller
-        name="narrationConsistency"
-        control={control}
-        render={({ field }) => (
-            <FormControlLabel
-                control={<Checkbox {...field} checked={field.value} />}
-            // label="Was the narration consistent?"
-            />
-        )}
-    />
-</FormControl> */}
-
-                    {/* Slider Question */}
-                    {/* <FormControl component="fieldset" className="mt-4">
-    <FormLabel component="legend">How engaging was the narration? (0-1)</FormLabel>
-    <Controller
-        name="narrationEngagement"
-        control={control}
-        render={({ field }) => (
-            <Slider {...field} value={field.value} step={0.1} min={0} max={1} marks valueLabelDisplay="on" />
-        )}
-    />
-</FormControl> */}
-
-                    {/* Submit Button */}
                     <div
                         className='flex space-x-4'
                         style={{
@@ -250,35 +231,22 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                             zIndex: 1000,
                         }}
                     >
-                        <div>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                // type="submit"
-                                onClick={handleSaveClick}
-                                disabled={Object.keys(errors).length}
-                            >
-                                Save annotation
-                            </Button>
-                        </div>
-                        <div>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                // type="submit"
-                                onClick={() => {
-                                    goToRandomAnnotation()
-                                }}
-                            >
-                                Next
-                            </Button>
-                        </div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSaveClick}
+                            disabled={Object.keys(errors).length > 0}
+                        >
+                            Save annotation
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={goToRandomAnnotation}
+                        >
+                            Next
+                        </Button>
                     </div>
-
-
-                    {/* <Button variant="contained" color="primary" className="mt-4">
-    Submit
-</Button> */}
                 </form>
             </div>
 
