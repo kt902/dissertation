@@ -71,12 +71,19 @@ const questions = [
     }
 ]
 
+questions.forEach(q => {
+    q.optionLabelByValue = {};
+    q.options.forEach(o => {
+        q.optionLabelByValue[o.value] = o.label;
+    });
+})
+
 const schema = yup
     .object({
         action_presence: yup.number().integer().required("Please indicate if the action is present in the video."),
         ...questions.reduce((acc, q) => {
             acc[q.id] = yup.number().integer().when('action_presence', {
-                is:  1,
+                is: 1,
                 then: () => yup.number().integer().required(`Please rate the ${q.label.toLowerCase()}.`),
                 otherwise: () => yup.mixed().nullable().notRequired()
             });
@@ -105,6 +112,7 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
         control,
         watch,
         handleSubmit,
+        getValues,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(schema),
@@ -152,6 +160,25 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
     const handleHelpOpen = () => setOpenHelp(true);
     const handleHelpClose = () => setOpenHelp(false);
 
+
+    // State to track which question is expanded
+    const [expandedQuestion, setExpandedQuestion] = useState(null);
+
+
+    // Toggle the accordion for a question
+    const handleToggle = (questionId) => {
+        setExpandedQuestion(expandedQuestion === questionId ? null : questionId);
+    };
+
+    // Handle selection and auto-collapse
+    const handleSelection = () => {
+        const nextUnfilledQuestion = questions.find(q => !getValues(q.id));
+        if (nextUnfilledQuestion) {
+            setExpandedQuestion(nextUnfilledQuestion.id); // Open the next unfilled question
+        } else {
+            setExpandedQuestion(null); // Collapse if all are filled
+        }
+    };
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center m-4 pb-16">
@@ -206,7 +233,13 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                             name="action_presence"
                             control={control}
                             render={({ field }) => (
-                                <RadioGroup row {...field}>
+                                <RadioGroup
+                                    row {...field}
+                                    onChange={(event) => {
+                                        field.onChange(event); // Handle the change in form state
+                                        handleSelection(); // Auto-collapse after selection
+                                    }}
+                                >
                                     <FormControlLabel value="1" control={<Radio />} label="Yes" />
                                     <FormControlLabel value="0" control={<Radio />} label="No" />
                                 </RadioGroup>
@@ -215,22 +248,64 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                     </FormControl>
 
                     {/* Likert Scale Questions */}
-                    { actionPresence == 1 && questions.map((q) => (
-                        <FormControl component="fieldset" className="mt-4" key={q.id}>
-                            <FormLabel component="legend">{q.label}</FormLabel>
-                            <Controller
-                                name={q.id}
-                                control={control}
-                                render={({ field }) => (
-                                    <RadioGroup {...field}>
-                                        {q.options.map(option => (
-                                            <FormControlLabel key={option.value} value={option.value} control={<Radio />} label={option.label} />
-                                        ))}
-                                    </RadioGroup>
+                    {actionPresence == 1 && questions.map((q) => {
+                        const selectedLabel = q.optionLabelByValue[getValues(q.id)];
+                        const isExpanded = expandedQuestion === q.id;
+            
+                        return (
+                        <div key={q.id} style={{ marginBottom: '16px' }}>
+                            <div
+                                onClick={() => handleToggle(q.id)}
+                                style={{
+                                    cursor: 'pointer',
+                                    background: '#f0f0f0',
+                                    padding: '8px 16px',
+                                    borderRadius: '4px',
+                                }}
+                            >
+                                <Typography variant={isExpanded? "h5": "h6"}>
+                                    {q.label}
+                                </Typography>
+
+                                {expandedQuestion !== q.id && (
+                                    <Typography variant="body1" style={{ marginTop: '8px', color: selectedLabel ? '#1976d2' : '#555' }}>
+                                        {/* Display the selected option when collapsed */}
+                                        Selected: {selectedLabel || "None"}
+                                    </Typography>
                                 )}
-                            />
-                        </FormControl>
-                    ))}
+                            </div>
+
+                            {isExpanded && (
+                                <FormControl component="fieldset" className="mt-2" style={{ paddingLeft: '16px' }}>
+                                    <FormLabel component="legend">{q.label}</FormLabel>
+                                    <Controller
+                                        name={q.id}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <RadioGroup
+                                                {...field}
+                                                onChange={(event) => {
+                                                    field.onChange(event); // Handle the change in form state
+                                                    handleSelection(); // Auto-collapse after selection
+                                                }}
+                                            >
+                                                {q.options.map(option => (
+                                                    <FormControlLabel
+                                                        key={option.value}
+                                                        value={option.value}
+                                                        control={<Radio />}
+                                                        label={option.label}
+                                                    />
+                                                ))}
+                                            </RadioGroup>
+                                        )}
+                                    />
+                                </FormControl>
+                            )}
+                        </div>);
+                    })}
+
+
 
                     <div
                         className='flex space-x-4'
