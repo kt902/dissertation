@@ -97,6 +97,32 @@ export async function getAnnotations() {
     }
 }
 
+export async function getAllCompleteAnnotations(filter) {
+    try {
+        const mongoClient = await client.connect();
+        const database = mongoClient.db(process.env.DB_NAME); // Replace with your actual database name
+        const collection = database.collection("annotation_queue"); // Replace with your actual collection name
+
+        // Find all annotations for the given user_id and project only the status and narration_id fields
+        const annotations = await collection.find(
+            { status: 'complete', ...filter }, // Query filter to match the user_id
+            { projection: { _id: 0, user_id: 1, narration_id: 1, annotation: 1 } } // Projection to include only status and narration_id, exclude _id
+        ).toArray();
+
+        return {
+            success: true,
+            data: annotations,
+        };
+    } catch (e) {
+        console.error("Error retrieving annotations:", e);
+        return {
+            success: false,
+            message: "Failed to retrieve annotations",
+            error: e.message,
+        };
+    }
+}
+
 
 export async function storeAnnotation(narrationId, annotationData) {
     try {
