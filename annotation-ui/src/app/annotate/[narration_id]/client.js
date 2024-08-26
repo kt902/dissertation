@@ -122,8 +122,6 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
         },
     });
 
-    console.log(annotation);
-
     const actionPresence = watch('action_presence'); // Watch the value of action_presence
 
 
@@ -329,7 +327,7 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                             color="secondary"
                             onClick={goToRandomAnnotation}
                         >
-                            Next
+                            Skip
                         </Button>
                     </div>
                 </form>

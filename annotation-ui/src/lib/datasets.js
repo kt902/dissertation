@@ -7,7 +7,7 @@ import completeDataCSV from '@/data/epic_complete.csv';
 import { cookies } from 'next/headers';
  
 const getVideoURL = (narration_id) => {
-    return `https://kumbi-dissertation.s3.amazonaws.com/EK-100/${narration_id}.mp4`;
+    return `https://kumbi-dissertation.s3.amazonaws.com/EK-100/reduced/${narration_id}.mp4`;
 };
 
 async function fetchEntireDataset(sourceData) {

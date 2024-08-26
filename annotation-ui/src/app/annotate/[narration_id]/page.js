@@ -17,7 +17,7 @@ export default async function AnnotateServer({ params }) {
 
     if (narration_id == "random") {
         const { annotation } = await getRandomPendingAnnotation();
-        // console.log(annotation)
+        // console.log("annotate", annotation)
 
         if (!annotation) {
             return notFound();
