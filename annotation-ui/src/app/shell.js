@@ -8,6 +8,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import EditIcon from "@mui/icons-material/Edit";
 import CalculateIcon from "@mui/icons-material/Calculate";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import LogoutIcon from "@mui/icons-material/Logout";
 
 import { signIn, signOut } from "next-auth/react"
@@ -92,6 +93,12 @@ export default function Shell({ children, dataset }) {
               <ListItem button>
                 <CalculateIcon sx={{ mr: 2 }} />
                 <ListItemText primary="Statistics" />
+              </ListItem>
+            </Link>
+            <Link href="/export" passHref>
+              <ListItem button>
+                <FileDownloadIcon sx={{ mr: 2 }} />
+                <ListItemText primary="Export" />
               </ListItem>
             </Link>
           </List>
