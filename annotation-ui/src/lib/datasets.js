@@ -2,7 +2,7 @@
 
 import fileMapping from '@/data/file-mapping.json';
 import Papa from 'papaparse';
-import dataCSV from '@/data/epic_sample.csv';
+import dataCSV from '@/data/validations.csv';
 import completeDataCSV from '@/data/epic_complete.csv';
 import { cookies } from 'next/headers';
  

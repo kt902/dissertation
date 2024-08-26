@@ -78,7 +78,7 @@ const schema = yup
             acc[q.id] = yup.number().integer().when('action_presence', {
                 is:  1,
                 then: () => yup.number().integer().required(`Please rate the ${q.label.toLowerCase()}.`),
-                otherwise: () => yup.number().nullable().notRequired()
+                otherwise: () => yup.mixed().nullable().notRequired()
             });
             return acc;
         }, {})
@@ -103,6 +103,7 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
 
     const {
         control,
+        watch,
         handleSubmit,
         formState: { errors },
     } = useForm({
@@ -113,6 +114,11 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
         },
     });
 
+    console.log(annotation);
+
+    const actionPresence = watch('action_presence'); // Watch the value of action_presence
+
+
     const onSubmit = (data) => {
         setOpenDialog(false);
 
@@ -120,6 +126,8 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
             .then(({ allCount, completeCount }) => {
                 setCounts({ allCount, completeCount });
                 setOpenSnackbar(true);
+
+                goToRandomAnnotation();
             })
             .catch(error => {
                 console.error("Error saving annotation:", error);
@@ -127,7 +135,8 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
     };
 
     const handleSaveClick = () => {
-        setOpenDialog(true);
+        handleSubmit(onSubmit)();
+        // setOpenDialog(true);
     };
 
     const handleDialogClose = (confirm) => {
@@ -142,6 +151,7 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
 
     const handleHelpOpen = () => setOpenHelp(true);
     const handleHelpClose = () => setOpenHelp(false);
+
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center m-4 pb-16">
@@ -205,7 +215,7 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                     </FormControl>
 
                     {/* Likert Scale Questions */}
-                    {questions.map((q) => (
+                    { actionPresence == 1 && questions.map((q) => (
                         <FormControl component="fieldset" className="mt-4" key={q.id}>
                             <FormLabel component="legend">{q.label}</FormLabel>
                             <Controller

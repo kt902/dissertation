@@ -79,7 +79,7 @@ function distributeItems(items, people) {
 (async function main() {
     const { client, db } = await connectToMongoDB();
 
-    const csvFilePath = "./src/data/epic_complete.csv"; // Replace with your actual CSV file path
+    const csvFilePath = "./src/data/validations.csv"; // Replace with your actual CSV file path
 
     try {
         const items = await parseCSV(csvFilePath);
@@ -118,6 +118,9 @@ function distributeItems(items, people) {
 
         // Upsert annotations
         const annotationQueueCollection = db.collection("annotation_queue");
+
+        const result = await annotationQueueCollection.deleteMany({});
+        console.log(result);
 
         for (let index = 0; index < users.length; index++) {
             const { email, password } = users[index];
