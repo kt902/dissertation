@@ -2,7 +2,7 @@
 
 import Link from "next/link"; // Import Link component from Next.js
 import { useState } from "react";
-import { Drawer, AppBar, Toolbar, IconButton, Typography, List, ListItem, ListItemText, Divider, CssBaseline, Box, Select, MenuItem, InputLabel } from "@mui/material";
+import { FormControl, Drawer, AppBar, Toolbar, IconButton, Typography, List, ListItem, ListItemText, Divider, CssBaseline, Box, Select, MenuItem, InputLabel } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -46,22 +46,24 @@ export default function Shell({ children, dataset }) {
         onClose={toggleDrawer}
       >
         <Box sx={{ padding: 2 }}>
-          <InputLabel id="demo-simple-select-helper-label">Dataset</InputLabel>
-          <Select
-            defaultValue={dataset}
-            onChange={(e) => {
-              // console.log(e)
-              setCurrentDatasetName(e.target.value).then(_ => location.reload())
-            }}
-            fullWidth
-            label="Dataset"
-            labelId="demo-select-small-label"
-          // displayEmpty
-          >
-            <MenuItem value="validation">Validation</MenuItem>
-            <MenuItem value="complete">Complete</MenuItem>
-            {/* Add more datasets here if needed */}
-          </Select>
+          <FormControl variant='outlined' style={{ width: '100%' }} margin={'1'}>
+            <InputLabel id="test-select-label">Dataset</InputLabel>
+            <Select
+              defaultValue={dataset}
+              onChange={(e) => {
+                // console.log(e)
+                setCurrentDatasetName(e.target.value).then(_ => location.reload())
+              }}
+              fullWidth
+              label="Dataset"
+              labelId="test-select-label"
+            // displayEmpty
+            >
+              <MenuItem value="validation">Validation</MenuItem>
+              <MenuItem value="complete">Complete</MenuItem>
+              {/* Add more datasets here if needed */}
+            </Select>
+          </FormControl>
         </Box>
         <Divider />
         <Box
