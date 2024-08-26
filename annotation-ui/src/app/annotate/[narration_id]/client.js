@@ -17,6 +17,7 @@ const questions = [
     {
         id: 'object_presence',
         label: "How clearly visible are the primary objects involved in the action?",
+        label_category: "Object Presence",
         options: [
             { value: 1, label: 'Not visible at all' },
             { value: 2, label: 'Barely visible' },
@@ -27,6 +28,7 @@ const questions = [
     },
     {
         id: 'action_completeness',
+        label_category: "Action Completeness",
         label: "How completely does the video segment capture the entire action, including the beginning and end?",
         options: [
             { value: 1, label: 'Completely misses the action' },
@@ -38,6 +40,7 @@ const questions = [
     },
     {
         id: 'focus',
+        label_category: "Distractions",
         label: "How well does the video maintain focus on the action, minimizing the impact of distracting objects or movements in the background?",
         options: [
             { value: 1, label: 'Completely unfocused, very distracting' },
@@ -49,6 +52,7 @@ const questions = [
     },
     {
         id: 'lighting',
+        label_category: "Lighting",
         label: "How well does the lighting in the video support clear visibility of the action?",
         options: [
             { value: 1, label: 'Very poorly lit, action barely visible' },
@@ -60,6 +64,7 @@ const questions = [
     },
     {
         id: 'camera_motion',
+        label_category: "Camera Motion",
         label: "How well is the camera motion controlled, allowing for clear observation of the action?",
         options: [
             { value: 1, label: 'Very erratic, action is hard to follow' },
@@ -251,18 +256,19 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                         const isExpanded = expandedQuestion === q.id;
             
                         return (
-                        <div key={q.id} style={{ marginBottom: '16px' }}>
+                        <div key={q.id} style={{ marginBottom: '16px', width: '100%' }}>
                             <div
                                 onClick={() => handleToggle(q.id)}
                                 style={{
                                     cursor: 'pointer',
                                     background: '#f0f0f0',
                                     padding: '8px 16px',
+                                    width: '100%',
                                     borderRadius: '4px',
                                 }}
                             >
                                 <Typography variant={isExpanded? "h5": "h6"}>
-                                    {q.label}
+                                    {q.label_category}
                                 </Typography>
 
                                 {expandedQuestion !== q.id && (
@@ -275,7 +281,7 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
 
                             {isExpanded && (
                                 <FormControl component="fieldset" className="mt-2" style={{ paddingLeft: '16px' }}>
-                                    <FormLabel component="legend">{q.label}</FormLabel>
+                                    <FormLabel component="legend" className="my-2">{q.label}</FormLabel>
                                     <Controller
                                         name={q.id}
                                         control={control}

@@ -11,7 +11,8 @@ const Video = ({ src }) => {
             autoPlay
             playsInline
             src={src}
-        />
+        >
+        </video>
     );
 };
 
