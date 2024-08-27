@@ -56,7 +56,7 @@ function FilesTable({ files }) {
               Narration ID: <span className="p-2 bg-red-500 text-white">{file.narration_id}</span>
             </div>
             <div className='mr-3 inline'>
-              Action Label: <span className="p-2 bg-red-500 text-white">{file.narration}</span>
+              Action Label: <span className="p-2 bg-red-500 text-white">{file.action_label}</span>
             </div>
           </div>
 

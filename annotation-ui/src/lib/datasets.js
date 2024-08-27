@@ -24,6 +24,9 @@ async function fetchEntireDataset(sourceData) {
                 const dataArray = results.data.map(row => ({
                     narration_id: row.narration_id,
                     narration: row.narration,
+                    // verb_class: row.verb_class,
+                    // noun_class: row.noun_class,
+                    action_label: [row.verb, row.noun].join(" "),
                     url: getVideoURL(row.narration_id)
                 }));
 
