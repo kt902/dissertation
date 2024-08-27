@@ -1,6 +1,9 @@
 import { getAllCompleteAnnotations } from "@/lib/actions";
 import Papa from 'papaparse';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
     const { success, data } = await getAllCompleteAnnotations();
     if (!success) {

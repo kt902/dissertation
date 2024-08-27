@@ -40,14 +40,14 @@ const questions = [
     },
     {
         id: 'focus',
-        label_category: "Distractions",
-        label: "How well does the video maintain focus on the action, minimizing the impact of distracting objects or movements in the background?",
+        label_category: "Action Emphasis",
+        label: "How well does the video emphasize the action, minimizing the impact of distracting objects or movements in the background?",
         options: [
-            { value: 1, label: 'Completely unfocused, very distracting' },
-            { value: 2, label: 'Often unfocused, many distractions' },
-            { value: 3, label: 'Somewhat focused, occasional distractions' },
-            { value: 4, label: 'Mostly focused, minimal distractions' },
-            { value: 5, label: 'Perfectly focused, no distractions' }
+            { value: 1, label: 'Very poorly emphasized, with significant distractions' },
+            { value: 2, label: 'Poorly emphasized, with many distractions' },
+            { value: 3, label: 'Somewhat emphasized, with distractions' },
+            { value: 4, label: 'Mostly emphasized, with minimal distractions' },
+            { value: 5, label: 'Well emphasized, with no distractions' }
         ]
     },
     {
@@ -254,59 +254,59 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                     {actionPresence == 1 && questions.map((q) => {
                         const selectedLabel = q.optionLabelByValue[getValues(q.id)];
                         const isExpanded = expandedQuestion === q.id;
-            
+
                         return (
-                        <div key={q.id} style={{ marginBottom: '16px', width: '100%' }}>
-                            <div
-                                onClick={() => handleToggle(q.id)}
-                                style={{
-                                    cursor: 'pointer',
-                                    background: '#f0f0f0',
-                                    padding: '8px 16px',
-                                    width: '100%',
-                                    borderRadius: '4px',
-                                }}
-                            >
-                                <Typography variant={isExpanded? "h5": "h6"}>
-                                    {q.label_category}
-                                </Typography>
-
-                                {expandedQuestion !== q.id && (
-                                    <Typography variant="body1" style={{ marginTop: '8px', color: selectedLabel ? '#1976d2' : '#555' }}>
-                                        {/* Display the selected option when collapsed */}
-                                        Selected: {selectedLabel || "None"}
+                            <div key={q.id} style={{ marginBottom: '16px', width: '100%' }}>
+                                <div
+                                    onClick={() => handleToggle(q.id)}
+                                    style={{
+                                        cursor: 'pointer',
+                                        background: '#f0f0f0',
+                                        padding: '8px 16px',
+                                        width: '100%',
+                                        borderRadius: '4px',
+                                    }}
+                                >
+                                    <Typography variant={isExpanded ? "h5" : "h6"}>
+                                        {q.label_category}
                                     </Typography>
-                                )}
-                            </div>
 
-                            {isExpanded && (
-                                <FormControl component="fieldset" className="mt-2" style={{ paddingLeft: '16px' }}>
-                                    <FormLabel component="legend" className="my-2">{q.label}</FormLabel>
-                                    <Controller
-                                        name={q.id}
-                                        control={control}
-                                        render={({ field }) => (
-                                            <RadioGroup
-                                                {...field}
-                                                onChange={(event) => {
-                                                    field.onChange(event); // Handle the change in form state
-                                                    handleSelection(); // Auto-collapse after selection
-                                                }}
-                                            >
-                                                {q.options.map(option => (
-                                                    <FormControlLabel
-                                                        key={option.value}
-                                                        value={option.value}
-                                                        control={<Radio />}
-                                                        label={option.label}
-                                                    />
-                                                ))}
-                                            </RadioGroup>
-                                        )}
-                                    />
-                                </FormControl>
-                            )}
-                        </div>);
+                                    {expandedQuestion !== q.id && (
+                                        <Typography variant="body1" style={{ marginTop: '8px', color: selectedLabel ? '#1976d2' : '#555' }}>
+                                            {/* Display the selected option when collapsed */}
+                                            Selected: {selectedLabel || "None"}
+                                        </Typography>
+                                    )}
+                                </div>
+
+                                {isExpanded && (
+                                    <FormControl component="fieldset" className="mt-2" style={{ paddingLeft: '16px' }}>
+                                        <FormLabel component="legend" className="my-2">{q.label}</FormLabel>
+                                        <Controller
+                                            name={q.id}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <RadioGroup
+                                                    {...field}
+                                                    onChange={(event) => {
+                                                        field.onChange(event); // Handle the change in form state
+                                                        handleSelection(); // Auto-collapse after selection
+                                                    }}
+                                                >
+                                                    {q.options.map(option => (
+                                                        <FormControlLabel
+                                                            key={option.value}
+                                                            value={option.value}
+                                                            control={<Radio />}
+                                                            label={option.label}
+                                                        />
+                                                    ))}
+                                                </RadioGroup>
+                                            )}
+                                        />
+                                    </FormControl>
+                                )}
+                            </div>);
                     })}
 
 
@@ -346,9 +346,21 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                 aria-labelledby="help-modal-title"
                 aria-describedby="help-modal-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', bgcolor: 'background.paper', border: '2px solid #000', boxShadow: 24, p: 4 }}>
+                <Box sx={{ 
+                    maxHeight: '-webkit-fill-available',
+                    overflowY: 'auto',
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    width: '80%', 
+                    bgcolor: 'background.paper', 
+                    border: '2px solid #000', 
+                    boxShadow: 24, 
+                    p: 4 
+                    }}>
                     <Typography id="help-modal-title" variant="h6" component="h2">
-                        Detailed Help
+                        Detailed Guidance
                     </Typography>
                     <Typography id="help-modal-description" sx={{ mt: 2 }} component="div">
                         <Typography variant="body1" component="p">

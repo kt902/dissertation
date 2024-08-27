@@ -2,7 +2,7 @@
 
 import Link from "next/link"; // Import Link component from Next.js
 import { useState } from "react";
-import { FormControl, Drawer, AppBar, Toolbar, IconButton, Typography, List, ListItem, ListItemText, Divider, CssBaseline, Box, Select, MenuItem, InputLabel } from "@mui/material";
+import { ThemeProvider, createTheme, FormControl, Drawer, AppBar, Toolbar, IconButton, Typography, List, ListItem, ListItemText, Divider, CssBaseline, Box, Select, MenuItem, InputLabel } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -13,6 +13,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 
 import { signIn, signOut } from "next-auth/react"
 import { setCurrentDatasetName } from "@/lib/datasets";
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'light',
+  },
+});
+
 
 export default function Shell({ children, dataset }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
