@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Suspense } from 'react';
 import Video from '@/components/Video';
 import { Container, Typography, Button, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Slider, Checkbox, IconButton, Modal, Box } from '@mui/material';
@@ -105,6 +105,8 @@ const defaultValues = questions.reduce((acc, q) => {
 });
 
 export default function Annotate({ file, annotation, allCount, completeCount }) {
+    const accordionRefs = useRef({})
+
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [counts, setCounts] = useState({ allCount, completeCount })
@@ -128,7 +130,6 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
     });
 
     const actionPresence = watch('action_presence'); // Watch the value of action_presence
-
 
     const onSubmit = (data) => {
         setOpenDialog(false);
@@ -182,6 +183,12 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
             setExpandedQuestion(null); // Collapse if all are filled
         }
     };
+
+    useEffect(() => {
+        if (expandedQuestion && accordionRefs.current[expandedQuestion]) {
+            accordionRefs.current[expandedQuestion].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [expandedQuestion]);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center m-4 pb-16">
@@ -256,7 +263,7 @@ export default function Annotate({ file, annotation, allCount, completeCount }) 
                         const isExpanded = expandedQuestion === q.id;
 
                         return (
-                            <div key={q.id} style={{ marginBottom: '16px', width: '100%' }}>
+                            <div ref={(el) => (accordionRefs.current[q.id] = el)} key={q.id} style={{ marginBottom: '16px', width: '100%' }}>
                                 <div
                                     onClick={() => handleToggle(q.id)}
                                     style={{
