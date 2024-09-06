@@ -1,0 +1,6 @@
+[submodule "research/AVION"]
+	path = research/AVION
+	url = https://github.com/kt902/AVION.git
+[submodule "research/C1-Action-Recognition-TSN-TRN-TSM"]
+	path = research/C1-Action-Recognition-TSN-TRN-TSM
+	url = https://github.com/kt902/C1-Action-Recognition-TSN-TRN-TSM.git

@@ -1,0 +1,6 @@
+Dataset,Unique Verb Classes,Unique Noun Classes,Total Video Segments
+augmented,68,169,6027
+complete,97,293,76885
+test,68,169,1809
+train,68,169,3163
+validation,66,164,1055
