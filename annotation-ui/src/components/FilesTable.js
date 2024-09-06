@@ -4,9 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-
-import fileMapping from '@/data/file-mapping.json';
-
+import Video from './Video';
 
 function FilesTable({ files }) {
   const router = useRouter()
@@ -50,15 +48,20 @@ function FilesTable({ files }) {
       {file &&
         <>
           {/* <h2>{file.narration}</h2> */}
-          <div className="m-4 p-2 bg-red-500 text-white rounded-lg shadow-lg">
+          {/* <div className="m-4 p-2 bg-red-500 text-white rounded-lg shadow-lg">
             {file.narration_id}: {file.narration}
+          </div> */}
+          <div className='my-2'>
+            <div className='mr-3 inline'>
+              Narration ID: <span className="p-2 bg-red-500 text-white">{file.narration_id}</span>
+            </div>
+            <div className='mr-3 inline'>
+              Action Label: <span className="p-2 bg-red-500 text-white">{file.action_label}</span>
+            </div>
           </div>
 
-          <video
-            className="h-full w-full rounded-lg"
-            controls
-            src={`https://kumbi-dissertation.s3.amazonaws.com/EPIC-KITCHENS-100/${fileMapping[file.narration_id]}`}
-          />
+
+          <Video src={file.url} />
         </>}
 
       <div className='bg-white'>
