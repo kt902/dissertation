@@ -44,45 +44,12 @@ This will pull in the required submodules with the custom changes that allow AVI
    - Augmented datasets are used to improve generalization, and different metrics (e.g., MAE) are used to evaluate performance. 
    - Scripts in `scripts-estimator` are used to evaluate quality metrics, generate correlation plots, and assess performance across various subgroups.
 
-## Results Summary
-
-- Initial training on the ground truth dataset with a regression head yielded an average MAE of 0.4 for both TSN and AVION.
-- Augmenting the dataset improved training loss significantly (to 0.07), but the test set performance remained suboptimal (global MAE of 0.2).
-- Subgroup analysis (e.g., most vs. least represented classes) revealed no significant insights. The models struggled more with underrepresented classes, indicating the need for more data or better training strategies.
-
-## Installation
-
-To set up the environment, you can use the `environment.yml` file for dependencies (available in `research/C1-Action-Recognition-TSN-TRN-TSM`). After cloning the repository and initializing the submodules, run:
-
-```bash
-conda env create -f research/C1-Action-Recognition-TSN-TRN-TSM/environment.yml
-conda activate action-recognition-env
-```
-
-To install necessary Python dependencies for the UI and augmentation pipeline, navigate to their respective folders and use `npm` and `pip`:
-
-```bash
-cd annotation-ui
-npm install
-
-cd augmentation-pipeline
-pip install -r requirements.txt
-```
-
-## Usage
-
-### Running the Annotation UI
+## Running the Annotation UI
 ```bash
 cd annotation-ui
 npm run dev
 ```
 The UI allows you to annotate video segments, which is key for building quality datasets.
-
-### Running Augmentation
-```bash
-python augment-cli.py --input <path_to_video> --output <output_path>
-```
-The CLI allows you to apply augmentations to your dataset to simulate various video quality levels.
 
 ### Training Models
 For training the action recognition or quality estimation models, refer to the configuration files in `research/AVION` and `research/C1-Action-Recognition-TSN-TRN-TSM`.
