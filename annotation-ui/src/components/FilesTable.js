@@ -1,7 +1,6 @@
+"use client";
 
-"use client"
-
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback,  } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Video from './Video';

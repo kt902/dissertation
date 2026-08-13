@@ -1,4 +1,5 @@
 import { getAllCompleteAnnotations } from "@/lib/actions";
+import { getAnyNarration } from "@/lib/datasets";
 import Papa from 'papaparse';
 
 export const dynamic = 'force-dynamic';
@@ -10,14 +11,19 @@ export async function GET() {
         return new Response(null, {status: 500});
     }
     // Transform the JSON structure to a flat array
-    const flatData = data.map(({ user_id, narration_id, annotation }) => ({
-        user_id,
-        narration_id,
-        ...annotation
-    }));
+    const flatData = data.map(async ({ user_id, narration_id, annotation }) => {
+        const narration = await getAnyNarration(narration_id);
+        return {
+            user_id,
+            narration_id,
+            participant_id: narration.participant_id,
+            video_id: narration.video_id,
+            ...annotation,
+        }
+    });
 
     // Convert JSON to CSV
-    const csv = Papa.unparse(flatData);
+    const csv = Papa.unparse(await Promise.all(flatData));
     return new Response(csv, {
         headers: {
             // 'Content-Disposition': `attachment; filename="ek-100-annotation-data.csv"`,

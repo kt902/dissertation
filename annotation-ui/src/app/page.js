@@ -1,3 +1,5 @@
+"use server";
+
 import FilesTable from "@/components/FilesTable";
 import Image from "next/image";
 import { Suspense } from 'react';

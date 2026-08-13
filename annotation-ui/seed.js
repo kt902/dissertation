@@ -112,20 +112,19 @@ function distributeItems(items, people) {
             }
         }
 
-
         // Distribute annotations;
-        const itemsPerUser = distributeItems(items, users);
+        // const itemsPerUser = distributeItems(items, users);
 
         // Upsert annotations
         const annotationQueueCollection = db.collection("annotation_queue");
 
-        const result = await annotationQueueCollection.deleteMany({});
-        console.log(result);
+        // const result = await annotationQueueCollection.deleteMany({});
+        // console.log(result);
 
         for (let index = 0; index < users.length; index++) {
             const { email, password } = users[index];
 
-            const items = itemsPerUser[email];
+            // const items = itemsPerUser[email];
 
             const annotatedItems = items.map(item => ({
                 user_id: email,

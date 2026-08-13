@@ -24,6 +24,9 @@ async function fetchEntireDataset(sourceData) {
                 const dataArray = results.data.map(row => ({
                     narration_id: row.narration_id,
                     narration: row.narration,
+                    participant_id: row.participant_id,
+                    video_id: row.video_id,
+                    
                     // verb_class: row.verb_class,
                     // noun_class: row.noun_class,
                     action_label: [row.verb, row.noun].join(" "),
@@ -45,13 +48,12 @@ async function fetchEntireDataset(sourceData) {
 const validationDataset = fetchEntireDataset(dataCSV);
 const completeDataset = fetchEntireDataset(completeDataCSV);
 
-export const getAll = async () => {
-    return (await getCurrentDataset()).list;
+export const getAnyNarration = async (narration_id) => {
+    return (await completeDataset).index.get(narration_id);
 }
 
-export const getRandomAnnotation = async () => {
-    const items = await getAll();
-    return items[Math.floor(Math.random() * items.length)];
+export const getAll = async () => {
+    return (await getCurrentDataset()).list;
 }
 
 export const getNarration = async (narration_id) => {
